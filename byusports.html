@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kyle's Passion Project – BYU Athletics Stats Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --byu-navy: #002e5d;
+      --byu-royal: #0062b8;
+      --byu-light: #e6edf5;
+      --bg: #050810;
+      --card-bg: #0f172a;
+      --card-alt: #020617;
+      --accent: #fbbf24;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.3);
+      --radius-lg: 1.2rem;
+      --radius-full: 9999px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0b1220 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    header {
+      border-radius: 1.5rem;
+      padding: 1.75rem 1.5rem;
+      margin-bottom: 1.5rem;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.28) 0, transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.32) 0, transparent 60%),
+        linear-gradient(135deg, var(--byu-navy), var(--byu-royal));
+      color: white;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 1.45rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      pointer-events: none;
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .title-block h1 {
+      font-size: clamp(1.9rem, 2.4vw, 2.4rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .title-block span {
+      display: inline-block;
+      margin-top: 0.35rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: var(--radius-full);
+      background: rgba(15, 23, 42, 0.5);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--byu-light);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      max-width: 360px;
+      color: #e0f2fe;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: rgba(15, 23, 42, 0.55);
+      font-size: 0.75rem;
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .tag-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.3);
+    }
+
+    nav {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-full);
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    nav a:hover {
+      background: rgba(15, 23, 42, 0.9);
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #0b1120, #020617);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 1.25rem;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.75);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .card-header h2 {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      padding: 0.15rem 0.7rem;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: var(--text-muted);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .stat-chip {
+      padding: 0.4rem 0.7rem;
+      border-radius: 0.75rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 0.75rem;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 0.1rem;
+    }
+
+    .stat-value.accent {
+      color: var(--accent);
+    }
+
+    .table-wrapper {
+      margin-top: 0.75rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8));
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    thead {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    th,
+    td {
+      padding: 0.5rem 0.7rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    tbody tr:hover {
+      background: rgba(30, 64, 175, 0.7);
+    }
+
+    td {
+      border-bottom: 1px solid rgba(31, 41, 55, 0.85);
+    }
+
+    td.result-win {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    td.result-loss {
+      color: #f97373;
+      font-weight: 600;
+    }
+
+    td.notes {
+      white-space: normal;
+      max-width: 260px;
+    }
+
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .pill-stat {
+      padding: 0.55rem 0.6rem;
+      border-radius: 0.8rem;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      font-size: 0.75rem;
+    }
+
+    .pill-stat span {
+      display: block;
+    }
+
+    .pill-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-muted);
+    }
+
+    .pill-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .form-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .form-grid-1 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.5);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      background: radial-gradient(circle at top left, #facc15, #ea580c);
+      color: #111827;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 30px rgba(250, 204, 21, 0.65);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    footer {
+      margin-top: 1.3rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer span {
+      opacity: 0.8;
+    }
+
+    .scroll-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .team-anchor {
+      scroll-margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <header>
+      <div class="header-inner">
+        <div class="title-block">
+          <h1>Kyle's Passion Project</h1>
+          <span>BYU Athletics Stats Database</span>
+          <p class="subtitle">
+            Central hub for logging and reviewing game stats across BYU's main sports:
+            football, basketball, baseball, and more.
+          </p>
+        </div>
+        <div>
+          <div class="tag-pill">
+            <div class="tag-pill-dot"></div>
+            <span>Manual entry • Single-page log</span>
+          </div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#football">Football</a>
+        <a href="#mbb">Men's Basketball</a>
+        <a href="#wbb">Women's Basketball</a>
+        <a href="#baseball">Baseball</a>
+        <a href="#volleyball">Volleyball</a>
+        <a href="#soccer">Soccer</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- LEFT COLUMN: TEAM TABLES -->
+      <section>
+        <!-- Football -->
+        <section id="football" class="card team-anchor">
+          <div class="card-header">
+            <h2>Football</h2>
+            <span class="badge">Fall Season</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="stat-chip">
+              <div class="stat-label">Record</div>
+              <div class="stat-value accent">0–0</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Conference</div>
+              <div class="stat-value">Big 12</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Tracking</div>
+              <div class="stat-value">Score, margin, key players</div>
+            </div>
+          </div>
+
+          <p class="form-hint">
+            Use this table to log each game: opponent, date, result, score, and standout players.
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game #</th>
+                  <th>Date</th>
+                  <th>Opponent</th>
+                  <th>Result</th>
+                  <th>BYU</th>
+                  <th>Opp</th>
+                  <th>Key Player</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="result-win">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player, Pos</td>
+                  <td class="notes">Example: 2 TD, 120 rush yds.</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="result-loss">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player, Pos</td>
+                  <td class="notes">Example: Late game-winning drive.</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player, Pos</td>
+                  <td class="notes">Notes / key moments.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="scroll-hint">Tip: Add more rows as the season progresses.</p>
+        </section>
+
+        <!-- Men's Basketball -->
+        <section id="mbb" class="card team-anchor" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2>Men's Basketball</h2>
+            <span class="badge">Winter Season</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="stat-chip">
+              <div class="stat-label">Record</div>
+              <div class="stat-value accent">0–0</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Conf Play</div>
+              <div class="stat-value">Big 12</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Tracking</div>
+              <div class="stat-value">Points, 3P, rebounds</div>
+            </div>
+          </div>
+
+          <p class="form-hint">
+            Log each game to track scoring trends, shooting percentages, and standout performances.
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game #</th>
+                  <th>Date</th>
+                  <th>Opponent</th>
+                  <th>Result</th>
+                  <th>BYU Pts</th>
+                  <th>Opp Pts</th>
+                  <th>Top Scorer (pts)</th>
+                  <th>Reb / Ast leader</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="result-win">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player – 0</td>
+                  <td>Reb: 0, Ast: 0</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player – 0</td>
+                  <td>Reb: 0, Ast: 0</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>Player – 0</td>
+                  <td>Reb: 0, Ast: 0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Women's Basketball -->
+        <section id="wbb" class="card team-anchor" style="margin-top: 1rem;">
+          <div class="card-header">
+            <h2>Women's Basketball</h2>
+            <span class="badge">Winter Season</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="stat-chip">
+              <div class="stat-label">Record</div>
+              <div class="stat-value accent">0–0</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Key Focus</div>
+              <div class="stat-value">Defense & efficiency</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Metric</div>
+              <div class="stat-value">FG%, TOs, +/-</div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game #</th>
+                  <th>Date</th>
+                  <th>Opponent</th>
+                  <th>Result</th>
+                  <th>BYU Pts</th>
+                  <th>Opp Pts</th>
+                  <th>FG%</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>–%</td>
+                  <td class="notes">Key runs, defensive stretches, etc.</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>YYYY-MM-DD</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>–%</td>
+                  <td class="notes">Bench impact, clutch shots.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <!-- RIGHT COLUMN: OTHER SPORTS & INPUT FORM -->
+      <aside class="side-column">
+        <!-- Baseball -->
+        <section id="baseball" class="card team-anchor">
+          <div class="card-header">
+            <h2>Baseball</h2>
+            <span class="badge">Spring Season</span>
+          </div>
+
+          <div class="summary-grid">
+            <div class="stat-chip">
+              <div class="stat-label">Record</div>
+              <div class="stat-value accent">0–0</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Metric</div>
+              <div class="stat-value">OBP, ERA, HR</div>
+            </div>
+            <div class="stat-chip">
+              <div class="stat-label">Notes</div>
+              <div class="stat-value">Pitching & hitting splits</div>
+            </div>
+          </div>
+
+          <div class="table-wrapper" style="margin-top: 0.6rem;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Game #</th>
+                  <th>Opponent</th>
+                  <th>Result</th>
+                  <th>BYU</th>
+                  <th>Opp</th>
+                  <th>SP Line</th>
+                  <th>Key Bat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>IP: 0, ER: 0</td>
+                  <td>Player – 0-for-0</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Opponent Name</td>
+                  <td class="">W/L</td>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>IP: 0, ER: 0</td>
+                  <td>Player – 0-for-0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Volleyball & Soccer Snapshot -->
+        <section id="volleyball" class="card team-anchor">
+          <div class="card-header">
+            <h2>Volleyball & Soccer</h2>
+            <span class="badge">Quick Snapshot</span>
+          </div>
+
+          <p class="form-hint">
+            Use this panel to track high-level records and quick notes for other major BYU teams.
+          </p>
+
+          <div class="overview-grid">
+            <div class="pill-stat">
+              <span class="pill-label">Men's Volleyball Record</span>
+              <span class="pill-value">0–0</span>
+            </div>
+            <div class="pill-stat">
+              <span class="pill-label">Women's Volleyball Record</span>
+              <span class="pill-value">0–0</span>
+            </div>
+            <div class="pill-stat" id="soccer">
+              <span class="pill-label">Women's Soccer Record</span>
+              <span class="pill-value">0–0</span>
+            </div>
+            <div class="pill-stat">
+              <span class="pill-label">Clean Sheets (Soccer)</span>
+              <span class="pill-value">0</span>
+            </div>
+          </div>
+
+          <p class="scroll-hint">
+            You can repurpose any of the tables on the left as full logs for volleyball or soccer if you want deeper tracking.
+          </p>
+        </section>
+
+        <!-- Manual Game Entry Template -->
+        <section class="card">
+          <div class="card-header">
+            <h2>Game Entry Template</h2>
+            <span class="badge">Copy into new rows</span>
+          </div>
+
+          <p class="form-hint">
+            This is a non-functional template to help you stay consistent. Use it as a guide when
+            adding rows to any table (or when you eventually wire this into a real database / sheet).
+          </p>
+
+          <form onsubmit="return false;">
+            <div class="form-grid">
+              <div>
+                <label for="sport">Sport</label>
+                <select id="sport" name="sport">
+                  <option value="Football">Football</option>
+                  <option value="Men's Basketball">Men's Basketball</option>
+                  <option value="Women's Basketball">Women's Basketball</option>
+                  <option value="Baseball">Baseball</option>
+                  <option value="Volleyball">Volleyball</option>
+                  <option value="Soccer">Soccer</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" />
+              </div>
+              <div>
+                <label for="opponent">Opponent</label>
+                <input type="text" id="opponent" name="opponent" placeholder="Opponent name" />
+              </div>
+              <div>
+                <label for="result">Result</label>
+                <select id="result" name="result">
+                  <option value="">-- Select --</option>
+                  <option value="W">Win</option>
+                  <option value="L">Loss</option>
+                  <option value="T">Tie</option>
+                  <option value="P">Postponed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div>
+                <label for="score-byu">BYU Score</label>
+                <input type="number" id="score-byu" name="score-byu" min="0" />
+              </div>
+              <div>
+                <label for="score-opp">Opponent Score</label>
+                <input type="number" id="score-opp" name="score-opp" min="0" />
+              </div>
+            </div>
+
+            <div class="form-grid form-grid-1">
+              <div>
+                <label for="key-players">Key Player(s)</label>
+                <input
+                  type="text"
+                  id="key-players"
+                  name="key-players"
+                  placeholder="e.g., Player A (20 pts), Player B (10 reb)"
+                />
+              </div>
+              <div>
+                <label for="notes">Short Notes</label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  placeholder="Clutch moments, turning points, notable stats..."
+                ></textarea>
+              </div>
+            </div>
+
+            <button class="btn" type="submit">
+              Copy Data Manually
+            </button>
+          </form>
+        </section>
+      </aside>
+    </main>
+
+    <footer>
+      <span>Built as a static log — ready to evolve into a full database or analytics dashboard whenever you are.</span>
+    </footer>
+  </div>
+</body>
+</html>
